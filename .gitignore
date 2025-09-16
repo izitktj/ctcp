@@ -1,0 +1,14 @@
+# BUILD
+build/
+.exe
+.obj
+.o
+
+# Editors
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+*.iml
