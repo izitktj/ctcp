@@ -12,3 +12,7 @@ build/
 .idea/
 .vscode/
 *.iml
+
+# LSP
+compile_commands.json
+.cache/
