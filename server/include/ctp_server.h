@@ -1,19 +1,7 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#include <stdio.h>
-#include <string.h>
-
-#ifdef __linux__
-  #include <sys/socket.h>
-  
-  #include <netinet/in.h>
-  
-  #include <unistd.h>
-  #include <stdlib.h>
-  #include <sys/types.h>
-  #include <arpa/inet.h>
-#endif
+#include "ctp_base_includes.h"
 
 typedef struct ctp_server {
   int socketfd;
