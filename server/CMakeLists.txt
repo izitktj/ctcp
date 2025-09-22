@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(CTCP LANGUAGES C)
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 file(GLOB_RECURSE _src
     ${PROJECT_SOURCE_DIR}/src/*.c
