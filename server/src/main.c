@@ -1,3 +1,4 @@
+#include "ctp_http.h"
 #include "ctp_server.h"
 #include <stdio.h>
 #include <string.h>
@@ -33,59 +34,8 @@ int main(int argc, char **argv) {
   }
 
   while(1) {
-    int clientfd;
-    char rc_request_method[64];
-    char rc_route[128];
-    char rc_protocol[64];
-
-    char rc_headers[10240][50];
-    int rc_header_size = 0;
-    
-    char rc_buffer[2048];
-    char rc_headers_buffer[2048];
-    char rc_request[2048];
-  
-    if((clientfd = accept(server->socketfd, (struct sockaddr*) server->servaddr, &server->servaddrlen)) < 0) {
-      fprintf(stderr, "Error setting up new connection socket");
-      return (EXIT_FAILURE);
-    }
-  
-    rc = read(clientfd, rc_buffer, 2048 - 1);
-    strcpy(rc_request, rc_buffer);
-
-    // GET BASIC REQUEST INFORMATION
-    sprintf(rc_request_method, "%s", strtok(rc_buffer, " "));
-    sprintf(rc_route, "%s", strtok(0, " "));
-    sprintf(rc_protocol, "%s", strtok(0, "\r\n"));
-
-    char *end_token = strstr(rc_request, "\r\n\r\n");
-    if (end_token != NULL) {
-      memcpy(rc_headers_buffer, rc_request, (size_t) (end_token - rc_request));
-    }
-
-    // GET HEADERS
-    char *token = strtok(rc_headers_buffer, "\r\n");
-    for(int i = 0;; i++) {
-      token = strtok(0, "\r\n");
-      if(token == NULL || strstr(&token[strlen(token) + 1], "\r\n\r\n") != NULL) break;
-      
-      sprintf(rc_headers[i], "%s", token);
-      rc_header_size++;
-    }    
-    
-    printf("\nMethod: '%s'\nRoute: '%s'\nProtocol: '%s'\n\n", rc_request_method, rc_route, rc_protocol);
-    
-    printf("\nHeaders: \n");
-    
-    for(int i = 0; i < rc_header_size; i++) {
-      printf("HEADER: %s\n", rc_headers[i]);
-    }
-    
-    printf("\n\nOriginal send request:\n%s\n\n", rc_request);
-
-    send(clientfd, send_content, strlen(send_content), 0);
-
-    close(clientfd);
+    // send(clientfd, send_content, strlen(send_content), 0);
+    ctp_listen_requests(server);
   }
   
   close(server->socketfd);

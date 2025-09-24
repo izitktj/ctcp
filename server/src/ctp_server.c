@@ -24,7 +24,7 @@ pctp_server create_server(int domain, int type, int protocol, char *address, int
     return NULL;
   }
   
-  serverfd->socketfd          = socket(domain, type, protocol);
+  serverfd->socketfd    = socket(domain, type, protocol);
   serverfd->domain      = domain;
   serverfd->protocol    = protocol;
   serverfd->type        = type;
