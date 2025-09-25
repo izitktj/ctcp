@@ -54,4 +54,8 @@ PCTP_HTTP_REQUEST ctp_handle_http_request(int clientfd);
 
 static void ctp_parse_response(const char *request, int requestSize, PCTP_HTTP_REQUEST rq);
 
+static void ctp_send_response(const char *file, int fileSize);
+
+const char *generate_header(char *protocol, char *statusCode, char *contentType);
+
 #endif

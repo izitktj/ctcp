@@ -1,4 +1,6 @@
 #include "ctp_http.h"
+#include "ctp_http_errornos.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -88,4 +90,49 @@ static void ctp_parse_response(const char *request, int requestSize, PCTP_HTTP_R
     printf("\n\nOriginal send request:\n%s\n\n", request);
 
     // send(clientfd, send_content, strlen(send_content), 0);
+}
+
+static void ctp_send_response(const char *fileLocation, int fileLocationSize) {
+  FILE *fptr;
+  int fileSize;
+  char *file_buffer, header;
+
+  if((fptr = (FILE *) fopen(fileLocation, "r")) == NULL) {
+    handle_error(CTP_ERRORNO_GET_FILE, "Error getting file to response");
+    // Awser a 500 error
+    return;
+  }
+
+  fseek(fptr, 0L, SEEK_END);
+  fileSize = ftell(fptr);
+
+  if((file_buffer = (char *) malloc(sizeof(char) * fileSize)) == NULL) {
+    handle_error(CTP_ERRORNO_ALLOC, "Error alocating data for file");
+    return;
+  }
+
+  fgets(file_buffer, fileSize, fptr);
+  size_t read_bytes = fread(file_buffer, 1, sizeof(fileSize) - 1, fptr);
+  file_buffer[read_bytes] = '\0';
+
+  header = generate_header("", char *statusCode, char *contentType)
+
+  snprintf(file_buffer, read_bytes + 1, "%s%s", );
+}
+
+const char *generate_header(char *protocol, char *statusCode, char *contentType) {
+  char *headerBuffer;
+  int sizeHeaderBuffer;
+
+  sizeHeaderBuffer =
+    sizeof(protocol)   + 1 + // +1 to include whitespaces
+    sizeof(statusCode) + 1 +
+    sizeof(contentType)+ 1 +
+    sizeof(char) * 6; 
+    
+  headerBuffer = (char *) malloc(sizeHeaderBuffer);
+
+  snprintf(headerBuffer, sizeHeaderBuffer, "%s %s\r\n%s\r\n\r\n", protocol, statusCode, contentType);
+
+  return headerBuffer;
 }
