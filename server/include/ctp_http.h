@@ -48,11 +48,17 @@ typedef struct CTP_HTTP_REQUEST{
   CTP_HTTP_ROUTE_PARAM routeParams[CTP_ROUTE_MAX_PARAMS];
 }CTP_HTTP_REQUEST, *PCTP_HTTP_REQUEST;
 
-void ctp_listen_requests(ctp_server *server_socket);
+void ctp_listen_requests(PCTP_SERVER server_socket);
 
 PCTP_HTTP_REQUEST ctp_handle_http_request(int clientfd);
 
-static void ctp_parse_response(const char *request, int requestSize, PCTP_HTTP_REQUEST rq);
+static void ctp_parse_request(const char *request, int requestSize, PCTP_HTTP_REQUEST rq);
+
+static void ctp_send_response(const char *file, int clientfd);
+
+static int ctp_read_file(char **file, int *fileSize, const char *fileLocation);
+
+char *generate_header(const char *protocol, const char *statusCode, const char *contentType);
 
 static void ctp_send_response(const char *file, int fileSize);
 

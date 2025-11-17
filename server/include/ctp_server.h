@@ -3,7 +3,7 @@
 
 #include "ctp_base_includes.h"
 
-typedef struct ctp_server {
+typedef struct CTP_SERVER {
   int socketfd;
   
   int domain;
@@ -12,12 +12,12 @@ typedef struct ctp_server {
 
   struct sockaddr_in *servaddr;
   socklen_t servaddrlen;
-}ctp_server, *pctp_server;
+}CTP_SERVER, *PCTP_SERVER;
 
 extern int CTP_ERRORNO;
 
 // Create socket with setsockopt reuse address 
-pctp_server create_server(int domain, int type, int protocol, char *address, int port);
+PCTP_SERVER create_server(int domain, int type, int protocol, char *address, int port);
 
 #endif
 
