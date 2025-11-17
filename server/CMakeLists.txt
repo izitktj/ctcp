@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
+if(DEBUG)
+    SET(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall")
+    set(CMAKE_BUILD_TYPE Debug)
+    message("DEBUG MODE ON")
+endif()
+
 project(CTCP LANGUAGES C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
