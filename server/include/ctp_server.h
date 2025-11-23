@@ -17,7 +17,7 @@ typedef struct CTP_SERVER {
 extern int CTP_ERRORNO;
 
 // Create socket with setsockopt reuse address 
-PCTP_SERVER create_server(int domain, int type, int protocol, char *address, int port);
+CTP_SERVER *create_server(int domain, int type, int protocol, char *address, int port);
 
 #endif
 

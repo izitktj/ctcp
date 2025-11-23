@@ -8,8 +8,8 @@ static void handle_error(unsigned short int error_code, const char *log_statment
   fprintf(stderr, "%s", log_statment);
 }
 
-PCTP_SERVER create_server(int domain, int type, int protocol, char *address, int port){
-  PCTP_SERVER serverfd = (PCTP_SERVER) malloc(sizeof(CTP_SERVER));
+CTP_SERVER *create_server(int domain, int type, int protocol, char *address, int port){
+  CTP_SERVER *serverfd = malloc(sizeof(CTP_SERVER));
   struct sockaddr_in *servaddr = (struct sockaddr_in*) malloc(sizeof(struct sockaddr_in));
   socklen_t servaddrlen = sizeof(struct sockaddr_in);
   int opt = 1;

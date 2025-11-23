@@ -14,7 +14,7 @@ typedef struct CTP_HTTP_SERVER_ARGS{
   unsigned int port;
 }CTP_HTTP_SERVER_ARGS, *PCTP_HTTP_SERVER_ARGS;
 
-extern PCTP_HTTP_SERVER_ARGS programArgs;
+extern CTP_HTTP_SERVER_ARGS *programArgs;
 
 static struct option long_options[] = {
     {"host", required_argument, 0, 'H'},
