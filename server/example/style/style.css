@@ -1,5 +1,30 @@
-.paragrafo {
-    color: blue;
+* {
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+.background {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding-left: 18%;
+    height: 100svh;
+
+    background-color: rgb(75, 75, 82);
+    background-image: url("/images/BG.svg");
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 40%;
+}
+
+.text-container {
+    background-color: rgb(42, 42, 46);
+    border-radius: 15px 15px;
+    padding: 25px;
+}
+
+.text {
+    color: whitesmoke;
     font-family: 'Courier New', Courier, monospace;
-    background-color: red;
 }
