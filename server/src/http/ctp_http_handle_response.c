@@ -9,38 +9,6 @@ unsigned int handle_error(int errorCode, const char *message) {
   return errorCode;
 }
 
-// void ctp_send_response(const char *fileLocation, int clientfd) {
-//   int fileSize = 0;
-//   char *fileBuffer = NULL;
-//   char *header = NULL;
-//   char *responseBuffer = NULL;
-//   ssize_t sent;
-
-//   if (ctp_read_file(&fileBuffer, &fileSize, fileLocation) != 0) {
-//     handle_error(CTP_ERRORNO_GET_FILE, "Error getting file to response\n");
-//     return;
-//   }
-
-//   header = generate_header("HTTP/1.1", "200 OK", "text/html");
-//   responseBuffer = malloc(strlen(header) + fileSize + 1);
-//   if (!responseBuffer) {
-//     handle_error(CTP_ERRORNO_ALLOC, "Error allocating response buffer\n");
-//     free(header);
-//     free(fileBuffer);
-//     return;
-//   }
-
-//   memcpy(responseBuffer, header, strlen(header));
-//   memcpy(responseBuffer + strlen(header), fileBuffer, fileSize);
-//   responseBuffer[strlen(header) + fileSize] = '\0';
-
-//   sent = send(clientfd, responseBuffer, strlen(header) + fileSize, 0);
-
-//   free(header);
-//   free(fileBuffer);
-//   free(responseBuffer);
-// }
-
 char *generate_header(const char *protocol, const char *statusCode, const char *contentType) {
   char *headerBuffer;
   int sizeHeaderBuffer;

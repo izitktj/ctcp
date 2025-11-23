@@ -1,86 +1,93 @@
 #include "http/ctp_http_parse_request.h"
+#include "http/ctp_http_request_utils.h"
 
-const void parse_headers(CTP_HTTP_REQUEST_HEADERS *headers, char **headersToParse, int headersToParseSize) {
-  for (int i = 0; i < headersToParseSize; i++) {
-    char *bfr = strdup(headersToParse[i]);
-    char *del = strstr(bfr, ": ");
+int parse_mrp(CTP_HTTP_REQUEST *rq, char *request) {
+  char *requestBfr = strdup(request);
+  char *mrpBfr;
+  char *restRequest = requestBfr;
+  char *restMrp;
 
-    headers->headers[i].value = strdup(&del[2]);
+  char *mrp = strtok_r(restRequest, "\r\n", &restRequest);
+  mrpBfr = strdup(mrp);
+  restMrp = mrpBfr;
+
+  char *method   = strtok_r(restMrp, " ", &restMrp);
+  char *route    = strtok_r(restMrp, " ", &restMrp);
+  char *protocol = strtok_r(restMrp, "\r\n", &restMrp);
+
+  if (!method || !route || !protocol) {
+    return -1;
+  }
+
+  rq->method   = ctp_get_method(method);
+  rq->route    = strdup(route);
+  rq->protocol = ctp_get_protocol(protocol);
+
+  printf("\nMethod: %d : '%s'\nRoute: '%s'\nProtocol: %d : '%s'\n", rq->method, method, rq->route, rq->protocol, protocol);
+
+  free(requestBfr);
+  free(mrpBfr);
+
+  return 0;
+}
+
+int parse_headers(CTP_HTTP_REQUEST_HEADERS *headers, char *request) {
+  char *requestBfr = strdup(request);
+
+  int maxHeadersSize = 8192; //8kb
+
+  char *startHeaders = strstr(requestBfr, "\r\n");
+  char *endHeaders = strstr(requestBfr, "\r\n\r\n");
+
+  char *token;
+
+  if (endHeaders - startHeaders >= maxHeadersSize) {
+    free(requestBfr);
+    return -1;
+  }
+
+  token = strtok(startHeaders, "\r\n");
+  int endIndex = endHeaders - startHeaders;
+  int curIndex = 0;
+
+  for(int headerI = 0;;headerI++) {
+    curIndex = token - startHeaders;
+    if(token == NULL || curIndex >= endIndex) {
+      break;
+    }
+
+    char *bfr = strdup(token);
+    char *del = strstr(token, ": ");
+
+    headers->headers[headerI].value = strdup(&del[2]);
 
     bfr[del - bfr] = '\0';
     
-    headers->headers[i].key = strdup(bfr);
+    headers->headers[headerI].key = strdup(bfr);
 
     headers->headersSize++;
 
-    printf("HEADER: %s: %s\n", headers->headers[i].key, headers->headers[i].value);
+    printf("HEADER: %s: %s\n", headers->headers[headerI].key, headers->headers[headerI].value);
+
+    token = strtok(NULL, "\r\n");
 
     free(bfr);
   }
+
+  free(requestBfr);
+  return 0;
 }
 
-
 const void ctp_parse_request(const char *request, int requestSize, CTP_HTTP_REQUEST *rq) {
-  char **rc_headers;
-  char *rc_block;
-  int rc_header_size = 0;
-  
-  char rc_headers_buffer[2048];
-  char rc_request_buffer[requestSize];
+  char *originalRequest = strdup(request);
 
-  int headerMaxSize = CTP_KEY_HEADER_MAX_SIZE + CTP_VALUE_HEADER_MAX_SIZE;
-  
-  memcpy(rc_request_buffer, request, sizeof(char) * requestSize);
+  parse_mrp(rq, originalRequest);
 
-  if(!(rc_headers = malloc(sizeof(char*) * CTP_HEADER_MAX_HEADERS))) {
-    printf("Error on alocate resource for rc_headers CHANGEME");
-    _exit(-1);
-  }
-  
-  if(!(rc_block = malloc(sizeof(char) * headerMaxSize * CTP_HEADER_MAX_HEADERS))) {
-    printf("Error on alocate resource for rc_block CHANGEME");
-    free(rc_headers);
-    _exit(-1);
-  }
-  
-  for (int i = 0; i < CTP_HEADER_MAX_HEADERS; i++) {
-    rc_headers[i] = &rc_block[i * headerMaxSize];
+  if(parse_headers(&rq->headers, originalRequest) == 0) {
+    printf("Header quantity: %d\n\n", rq->headers.headersSize);
   }
 
-  // GET BASIC REQUEST INFORMATION
-  char *rcRequestMethod = strtok(rc_request_buffer, " ");
-  char *rcRequestRoute = strtok(NULL, " ");
-  char *rcRequestProtocol = strtok(NULL, "\r\n");
-
-  if (!rcRequestMethod || !rcRequestRoute || !rcRequestProtocol) {
-    return;
-  }
-
-  char *end_token = strstr(request, "\r\n\r\n");
-  if (end_token != NULL) {
-    memcpy(rc_headers_buffer, request, (size_t) (end_token - request));
-  }
-
-  // GET PRE COMPUTED HEADERS
-  char *token = strtok(rc_headers_buffer, "\r\n");
-  for(int i = 0;; i++) {
-    token = strtok(0, "\r\n");
-    if(token == NULL || strstr(&token[strlen(token) + 1], "\r\n\r\n") != NULL) break;
-    
-    sprintf(rc_headers[i], "%s", token);
-    rc_header_size++;
-  }
-  
-  printf("\nMethod: '%s'\nRoute: '%s'\nProtocol: '%s'\n", rcRequestMethod, rcRequestRoute, rcRequestProtocol);
-  
-  rq->route = strdup(rcRequestRoute);
-
-  parse_headers(&rq->headers, rc_headers, rc_header_size);
-
-  printf("Header quantity: %d\n\n", rq->headers.headersSize);
-
-  free(rc_headers);
-  free(rc_block);
+  free(originalRequest);
   
   return;
 }

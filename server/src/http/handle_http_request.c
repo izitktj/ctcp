@@ -6,8 +6,7 @@
 
 #include "http/ctp_http_parse_request.h"
 #include "http/ctp_http_handle_response.h"
-#include "helpers/ctp_http_helpers.h"
-#include "http/ctp_http_mimes.h"
+#include "http/ctp_http_request_utils.h"
 
 extern int CTP_ERRORNO;
 int CTP_SOCKET_ERORRNO = 0;
