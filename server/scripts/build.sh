@@ -15,3 +15,7 @@ fi
 make
 
 cp -r ../example/* .
+
+if [ "$1" = "run" ] || [ "$2" = "run" ]; then
+    "${build_path}"/CTCP
+fi
